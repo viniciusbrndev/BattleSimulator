@@ -1,30 +1,29 @@
-#include "Unidade.hpp"
 #include "Infantaria.hpp"
 
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
+// Sorteia o poderAtaque base (30 a 60) na lista de inicialização da base,
+// depois sorteia forca (20 a 50) e velocidade (10 a 40).
+Infantaria::Infantaria()
+    : Unidade(sorteiaValor(30, 60)),
+      forca(sorteiaValor(20, 50)),
+      velocidade(sorteiaValor(10, 40)) {}
 
+// Não há recursos dinâmicos para liberar
+Infantaria::~Infantaria() {}
 
-namespace Jogo{
-Infantaria::Infantaria():Unidade(){
-    std::srand(std::time(0));
-
-    this->poderAtaque = std::rand() % (60 -30) +30;
-    this->forca = std::rand() % (50 -20) +20;
-    this->velocidade = std::rand() % (40 -10) +10;
-}
-Infantaria::~Infantaria(){}
-
-int Infantaria::getPoderAtaque() {
-    return ((poderAtaque*5) + (forca*3) + 
-(velocidade*2))/10;
-}
-void Infantaria::print(){
-    std::cout<<"Poder de ataque: "<<this->poderAtaque<<"Força: : "<<this->forca<<"Velocidade: "<<this->velocidade<<std::endl;
+// Aplica a fórmula da infantaria. O resultado fica entre 0 e 100
+// (mínimo 23 e máximo 53 com as faixas dadas), usando divisão inteira.
+int Infantaria::getPoderAtaque() const {
+    return ((poderAtaque * 5) + (forca * 3) + (velocidade * 2)) / 10;
 }
 
+// Sorteia novamente os atributos de infantaria para uma nova batalha
+void Infantaria::sortearAtributos() {
+    poderAtaque = sorteiaValor(30, 60);
+    forca = sorteiaValor(20, 50);
+    velocidade = sorteiaValor(10, 40);
+}
 
-
-
+// Identifica o tipo da unidade para impressão e relatórios
+std::string Infantaria::getTipo() const {
+    return "Infantaria";
 }

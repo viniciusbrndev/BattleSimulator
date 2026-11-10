@@ -1,25 +1,31 @@
 #pragma once
+
 #include <vector>
 #include <string>
-#include <memory>
 
 #include "Batalha.hpp"
-
-namespace Jogo {
+#include "Exercito.hpp"
 
 class Campanha {
 private:
-    std::vector<std::unique_ptr<Batalha>> batalhas;
+    std::vector<std::unique_ptr<Batalha>> batalhas;   // Batalhas criadas e geridas exclusivamente pela campanha
+    std::vector<std::shared_ptr<Exercito>> exercitos; // Exércitos participantes da campanha
 
 public:
     Campanha() = default;
-    ~Campanha() = default; 
-    //Geters & Seters
-    void adicionarBatalha(std::unique_ptr<Batalha> battle);
+    ~Campanha() = default;
 
+    // Adiciona um exército participante à campanha
+    void addExercito(std::shared_ptr<Exercito> exercito);
+
+    // Simula todos os confrontos em turno e returno (ida e volta)
     void simularBatalhas();
-    void gerarTabelaDePosicoes(const std::string& nomeArquivo = "") const;
+
+    // Gera a tabela de classificação exibindo em tela ou salvando em arquivo se o caminho for fornecido
+    void gerarTabelaDePosicoes(const std::string& nomeArquivo = "");
+
+    // Identifica e exibe no console a unidade com o maior número de destruições
     void mostrarUnidadeMaisDestrutiva() const;
 };
 
-} // namespace Jogo
+

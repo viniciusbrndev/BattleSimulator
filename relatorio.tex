@@ -1,0 +1,663 @@
+\documentclass[12pt,a4paper]{article}
+
+% ==============================================================================
+% Pacotes Fundamentais e Tipografia
+% ==============================================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[brazilian]{babel}
+\usepackage[top=3cm,bottom=2cm,left=3cm,right=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{shapes.multipart,arrows.meta,positioning,fit}
+
+% ==============================================================================
+% Configurações de Hiperlinks
+% ==============================================================================
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    citecolor=blue!70!black,
+    urlcolor=blue!70!black,
+    pdfauthor={Kaio Alves Simões, Luiz Henrique Silva Sampaio, Victor Kangussu},
+    pdftitle={Relatório Prático: Simulação de Batalhas Estratégicas Orientada a Objetos - BCC 138},
+    pdfsubject={Programação Orientada a Objetos - DECOM - UFOP},
+    pdfkeywords={C++, POO, Herança, Polimorfismo, Classes Abstratas, STL, Smart Pointers, BCC 138, UFOP}
+}
+
+% ==============================================================================
+% Configurações de Cabeçalho e Rodapé
+% ==============================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\footnotesize \nouppercase{\leftmark}}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% ==============================================================================
+% Configurações de Listagens de Código
+% ==============================================================================
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue!80!black}\bfseries,
+    commentstyle=\color{green!50!black}\itshape,
+    stringstyle=\color{red!70!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    backgroundcolor=\color{gray!5},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    rulecolor=\color{gray!40},
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=false,
+    extendedchars=true,
+    literate=
+        {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+        {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+        {à}{{\`a}}1 {è}{{\`e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+        {ã}{{\~a}}1 {õ}{{\~o}}1 {Ã}{{\~A}}1 {Õ}{{\~O}}1
+        {â}{{\^a}}1 {ê}{{\^e}}1 {î}{{\^i}}1 {ô}{{\^o}}1 {û}{{\^u}}1
+        {ç}{{\c{c}}}1 {Ç}{{\c{C}}}1
+}
+
+\begin{document}
+
+% ==============================================================================
+% CAPA (Capa Acadêmica ABNT / DECOM - UFOP)
+% ==============================================================================
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+    \centering
+    {\large \textbf{UNIVERSIDADE FEDERAL DE OURO PRETO -- UFOP}}\\[0.2cm]
+    {\large \textbf{INSTITUTO DE CIÊNCIAS EXATAS E BIOLÓGICAS -- ICEB}}\\[0.2cm]
+    {\large \textbf{DEPARTAMENTO DE COMPUTAÇÃO -- DECOM}}\\[0.2cm]
+
+    \vfill
+
+    {\large \textbf{BCC 138 -- PROGRAMAÇÃO ORIENTADA A OBJETOS}}\\[0.6cm]
+
+    {\LARGE \textbf{RELATÓRIO PRÁTICO I:}}\\[0.3cm]
+    {\Large \textbf{SISTEMA DE SIMULAÇÃO DE BATALHAS ESTRATÉGICAS EM C++}}\\[0.4cm]
+    {\large Modelagem Orientada a Objetos com Herança, Polimorfismo Dinâmico, STL e Gerenciamento Inteligente de Recursos}
+
+    \vfill
+
+    {\large \textbf{Autores:}}\\[0.25cm]
+    Kaio Alves Simões\\[0.15cm]
+    Luiz Henrique Silva Sampaio\\[0.15cm]
+    Victor Kangussu\\[0.15cm]
+    Vinícius Brandão\\[0.8cm]
+
+    {\large \textbf{Professor:}}\\[0.25cm]
+    Prof. Guillermo Camara Chavez
+
+    \vfill
+
+    {\large \textbf{Ouro Preto -- MG}}\\[0.2cm]
+    {\large \textbf{2026}}
+\end{titlepage}
+
+% ==============================================================================
+% SUMÁRIO
+% ==============================================================================
+\hypersetup{pageanchor=true}
+\pagenumbering{roman}
+\thispagestyle{empty}
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% ==============================================================================
+% 1. INTRODUÇÃO
+% ==============================================================================
+\section{Introdução}
+\label{sec:introducao}
+
+A simulação computacional de cenários estratégicos constitui um domínio clássico e fértil na Ciência da Computação, servindo tanto para o entretenimento digital quanto para o modelamento de dinâmicas decisórias e de alocação de recursos em sistemas complexos. Jogos célebres de estratégia em tempo real e em turnos, tais como \textit{Warhammer 40.000}, \textit{Age of Empires} e \textit{StarCraft}, fundamentam sua jogabilidade na interação coordenada entre exércitos compostos por unidades de combate com propriedades, papéis táticos e comportamentos heterogêneos.
+
+No contexto acadêmico da disciplina de \textbf{Programação Orientada a Objetos (BCC 138)} da Universidade Federal de Ouro Preto (UFOP), o presente trabalho prático tem como propósito central projetar e implementar, na linguagem \textbf{C++}, uma arquitetura orientada a objetos de alta qualidade que represente, armazene e manipule as entidades operacionais de um protótipo de jogo de estratégia militar. Nesse modelo, o usuário assume o papel de um comandante militar, estruturando suas divisões bélicas para posterior confronto orquestrado por um motor automatizado de simulação de batalhas em rodadas de turno e returno (ida e volta).
+
+O foco primordial do projeto reside na aplicação rigorosa dos conceitos estruturantes do paradigma orientado a objetos:
+\begin{itemize}
+    \item \textbf{Abstração:} isolamento dos atributos e comportamentos essenciais de entidades do domínio bélico através de classes conceituais bem delimitadas;
+    \item \textbf{Encapsulamento:} proteção do estado interno dos objetos via controle restrito de visibilidade (\texttt{private} e \texttt{protected}), expondo interfaces públicas coesas e previsíveis;
+    \item \textbf{Herança:} estruturação de uma hierarquia taxonômica em que subclasses especializadas (\texttt{Infantaria}, \texttt{Veiculo} e \texttt{Aeronave}) compartilham a identidade e a interface comum providas por uma superclasse abstrata base (\texttt{Unidade});
+    \item \textbf{Polimorfismo Dinâmico:} delegação do cálculo de capacidades bélicas e representação textual aos métodos virtuais sobrescritos nas classes filhas, resolvidos dinamicamente em tempo de execução via tabelas virtuais (\textit{vtables}).
+\end{itemize}
+
+Além dos fundamentos teóricos de POO, o projeto explora práticas contemporâneas de engenharia de software na linguagem C++ (padrão ISO C++23), tais como o idioma RAII (\textit{Resource Acquisition Is Initialization}), o emprego de contêineres e algoritmos da \textit{Standard Template Library} (STL), o gerenciamento seguro e moderno de ciclo de vida de objetos com ponteiros inteligentes (\texttt{std::unique\_ptr} e \texttt{std::shared\_ptr}) e a automação modular de compilação por meio de \texttt{Makefile}.
+
+% ==============================================================================
+% 2. FERRAMENTAS UTILIZADAS E AMBIENTE EXPERIMENTAL
+% ==============================================================================
+\section{Ferramentas Utilizadas e Ambiente Experimental}
+\label{sec:ferramentas}
+
+Para assegurar consistência, portabilidade, integridade de memória e conformidade estrita aos padrões de mercado, o desenvolvimento e os testes do sistema foram conduzidos sob um ecossistema controlado.
+
+\subsection{Linguagem, Padrão ISO e Compilador}
+O sistema foi desenvolvido em conformidade com o padrão \textbf{ISO C++23}, tirando partido de recursos modernos que enriquecem a legibilidade e a segurança de tipos:
+\begin{itemize}
+    \item \textbf{Compilador:} Clang++ 21.1.8 e GNU GCC 15.3.0, com invocação no padrão C++23 (\texttt{-std=c++23});
+    \item \textbf{Sinalizadores de Rigor:} Ativação estrita de diagnósticos do compilador: \texttt{-Wall} (habilita todos os avisos de construção usuais), \texttt{-Wextra} (adiciona verificações estritas suplementares) e \texttt{-Wpedantic} (rejeita extensões proprietárias não conformes ao padrão ISO). O código compila sem emitir nenhum aviso (\textit{warnings});
+    \item \textbf{Formatação de Texto:} Uso da biblioteca padrão de formatação tipada (\texttt{std::format}), introduzida no C++20 e expandida no C++23, permitindo a formatação elegante e segura de dados de calendário sem a fragilidade das funções herdadas de C como \texttt{snprintf}.
+\end{itemize}
+
+\subsection{Ambiente de Desenvolvimento e Automação de Build}
+\begin{itemize}
+    \item \textbf{Gerenciamento de Ambiente:} Ecossistema Nix associado ao \texttt{direnv} e \texttt{devenv}, garantindo total reprodutibilidade de dependências e isolamento de ferramentas entre sistemas operacionais Linux;
+    \item \textbf{Automação de Compilação com GNU Make:} Criação de um \texttt{Makefile} robusto e modular, encarregado de:
+    \begin{itemize}
+        \item Mapear e compilar incrementalmente arquivos fonte do diretório \texttt{src/} para o diretório de objetos \texttt{obj/};
+        \item Rastrear dependências de cabeçalhos por meio dos sinalizadores \texttt{-MMD -MP}, gerando arquivos \texttt{.d} que forçam a recompilação seletiva mediante alteração de qualquer \texttt{.hpp};
+        \item Emitir fragmentos de compilação (\texttt{-MJ}) e gerar automaticamente o arquivo \texttt{compile\_commands.json}, propiciando integração perfeita com servidores de linguagem (LSP, e.g. \texttt{clangd});
+        \item Vincular os objetos compilados ao binário final no diretório \texttt{build/game}.
+    \end{itemize}
+    \item \textbf{Organização de Diretórios:} Separação física clara entre a interface dos módulos (cabeçalhos \texttt{.hpp} em \texttt{src/}), implementações (\texttt{.cpp} em \texttt{src/}), artefatos intermediários (\texttt{obj/}) e binários executáveis (\texttt{build/}).
+\end{itemize}
+
+As especificações do ambiente de compilação e execução estão sintetizadas na Tabela~\ref{tab:ambiente}.
+
+\begin{table}[H]
+\centering
+\caption{Especificações do ambiente de desenvolvimento e execução.}
+\label{tab:ambiente}
+\begin{tabular}{p{0.35\textwidth} p{0.55\textwidth}}
+\toprule
+\textbf{Componente / Ferramenta} & \textbf{Especificação Adotada} \\
+\midrule
+Linguagem de Programação & C++ (Padrão ISO C++23) \\
+Compilador Principal & Clang++ versão 21.1.8 \\
+Compilador Secundário / Testes & GNU GCC versão 15.3.0 \\
+Gerenciador de Automação & GNU Make 4.4.1 \\
+Sistema Operacional & GNU/Linux (Kernel 6.x, x86\_64) \\
+Gerenciador de Dependências & Nix / Devenv / Direnv \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ==============================================================================
+% 3. ARQUITETURA DO SISTEMA E MODELAGEM ORIENTADA A OBJETOS
+% ==============================================================================
+\section{Arquitetura do Sistema e Modelagem Orientada a Objetos}
+\label{sec:arquitetura}
+
+A estrutura de classes do projeto foi concebida com estrita observância ao modelo conceitual estabelecido no diagrama do trabalho, priorizando \textbf{alta coesão} (cada classe possui uma única responsabilidade no domínio do jogo) e \textbf{baixo acoplamento} (interações estabelecidas por interfaces públicas explícitas e ponteiros polimórficos).
+
+\subsection{Diagrama de Classes UML}
+A Figura~\ref{fig:uml_diagram} apresenta o diagrama de classes da arquitetura completa implementada, detalhando as classes, visibilidade de atributos e operações, bem como as relações de herança, agregação e associação.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    scale=0.88,
+    every node/.style={transform shape},
+    umlclass/.style={
+        rectangle split,
+        rectangle split parts=3,
+        draw=black!70,
+        rounded corners=2pt,
+        fill=blue!5,
+        text width=4.8cm,
+        font=\scriptsize\ttfamily,
+        align=left
+    },
+    abstractclass/.style={
+        rectangle split,
+        rectangle split parts=3,
+        draw=black!70,
+        rounded corners=2pt,
+        fill=orange!8,
+        text width=4.8cm,
+        font=\scriptsize\ttfamily,
+        align=left
+    },
+    subclass/.style={
+        rectangle split,
+        rectangle split parts=3,
+        draw=black!70,
+        rounded corners=2pt,
+        fill=green!5,
+        text width=4.0cm,
+        font=\scriptsize\ttfamily,
+        align=left
+    },
+    relation/.style={
+        thick,
+        -latex
+    },
+    inherit/.style={
+        thick,
+        -{Triangle[open, scale=1.1]}
+    },
+    aggregation/.style={
+        thick,
+        -{Diamond[open, scale=1.3]}
+    }
+]
+
+% 1. Campanha
+\node[umlclass] (campanha) at (0, 7.5) {
+    \textbf{\centering Campanha}
+    \nodepart{second}
+    - batalhas: vector<unique\_ptr<Batalha>>\\
+    - exercitos: vector<shared\_ptr<Exercito>>
+    \nodepart{third}
+    + addExercito(shared\_ptr<Exercito>): void\\
+    + simularBatalhas(): void\\
+    + gerarTabelaDePosicoes(string): void\\
+    + mostrarUnidadeMaisDestrutiva(): void
+};
+
+% 2. Batalha
+\node[umlclass] (batalha) at (0, 2.5) {
+    \textbf{\centering Batalha}
+    \nodepart{second}
+    - data: Date\\
+    - exercitoA: shared\_ptr<Exercito>\\
+    - exercitoB: shared\_ptr<Exercito>\\
+    - resultadoA: int\\
+    - resultadoB: int
+    \nodepart{third}
+    + ataqueExercitoA(): void\\
+    + ataqueExercitoB(): void\\
+    + determinarVencedor(): void\\
+    + getResultado(): string
+};
+
+% 3. Date
+\node[umlclass] (date) at (-5.8, 2.5) {
+    \textbf{\centering Date}
+    \nodepart{second}
+    - dia: int\\
+    - mes: int\\
+    - ano: int
+    \nodepart{third}
+    + Date()\\
+    + Date(int, int, int)\\
+    + formatarData(): string
+};
+
+% 4. Exercito
+\node[umlclass] (exercito) at (6.2, 5.0) {
+    \textbf{\centering Exercito}
+    \nodepart{second}
+    - nome: string\\
+    - unidades: vector<unique\_ptr<Unidade>>\\
+    - vitorias: int\\
+    - derrotas: int\\
+    - empates: int
+    \nodepart{third}
+    + adicionarUnidade(unique\_ptr<Unidade>): void\\
+    + getResultados(): string\\
+    + imprimeUnidades(): void\\
+    + getPontos(): int\\
+    + registrarVitoria(): void
+};
+
+% 5. Unidade (Abstrata)
+\node[abstractclass] (unidade) at (6.2, -0.5) {
+    \textbf{\centering \textit{<<abstract>>} Unidade}
+    \nodepart{second}
+    \# poderAtaque: int\\
+    - destruicoes: int
+    \nodepart{third}
+    + virtual $\sim$Unidade()\\
+    + virtual getPoderAtaque(): int = 0\\
+    + virtual sortearAtributos(): void = 0\\
+    + virtual getTipo(): string = 0\\
+    + somaDestruicao(): void\\
+    + getDestruicoes(): int\\
+    + print(): void
+};
+
+% 6. Infantaria
+\node[subclass] (infantaria) at (1.5, -5.2) {
+    \textbf{\centering Infantaria}
+    \nodepart{second}
+    - forca: int\\
+    - velocidade: int
+    \nodepart{third}
+    + Infantaria()\\
+    + getPoderAtaque(): int override\\
+    + sortearAtributos(): void override\\
+    + getTipo(): string override
+};
+
+% 7. Veiculo
+\node[subclass] (veiculo) at (6.2, -5.2) {
+    \textbf{\centering Veiculo}
+    \nodepart{second}
+    - blindagem: int\\
+    - potenciaDeFogo: int
+    \nodepart{third}
+    + Veiculo()\\
+    + getPoderAtaque(): int override\\
+    + sortearAtributos(): void override\\
+    + getTipo(): string override
+};
+
+% 8. Aeronave
+\node[subclass] (aeronave) at (10.9, -5.2) {
+    \textbf{\centering Aeronave}
+    \nodepart{second}
+    - manobrabilidade: int\\
+    - alcance: int
+    \nodepart{third}
+    + Aeronave()\\
+    + getPoderAtaque(): int override\\
+    + sortearAtributos(): void override\\
+    + getTipo(): string override
+};
+
+% Relações
+% Campanha -> Batalha (composição)
+\draw[aggregation] (campanha.south) -- node[right, font=\scriptsize] {1..* compõe} (batalha.north);
+
+% Campanha -> Exercito (agregação)
+\draw[aggregation] (campanha.east) -| node[above, font=\scriptsize, near end] {2..* participa} (exercito.north);
+
+% Batalha -> Date (composição)
+\draw[relation] (batalha.west) -- node[above, font=\scriptsize] {1..1 data} (date.east);
+
+% Batalha -> Exercito (associação/uso)
+\draw[relation] (batalha.east) -| node[below, font=\scriptsize, near start] {2 exércitos} (exercito.south);
+
+% Exercito -> Unidade (agregação/posse)
+\draw[aggregation] (exercito.south) -- node[right, font=\scriptsize] {5 unidades} (unidade.north);
+
+% Herança: Infantaria, Veiculo, Aeronave -> Unidade
+\draw[inherit] (infantaria.north) -- (unidade.south -| infantaria.north);
+\draw[inherit] (veiculo.north) -- (unidade.south);
+\draw[inherit] (aeronave.north) -- (unidade.south -| aeronave.north);
+
+\end{tikzpicture}%
+}
+\caption{Diagrama de Classes da Arquitetura do Sistema de Batalhas.}
+\label{fig:uml_diagram}
+\end{figure}
+
+\subsection{Detalhamento das Entidades do Sistema}
+
+\subsubsection{Classe \texttt{Date}}
+A classe \texttt{Date} é responsável pelo encapsulamento de informações cronológicas (dia, mês e ano). Em virtude da inexistência de um tipo escalar nativo simples para representação de datas civis em versões legadas de C++, sua implementação como tipo próprio garante invariantes de validade:
+\begin{itemize}
+    \item \textbf{Atributos Privados:} inteiros \texttt{dia}, \texttt{mes} e \texttt{ano};
+    \item \textbf{Construtor Padrão:} inicializa a instância com uma data base (\texttt{01/01/2026});
+    \item \textbf{Construtor Parametrizado com Validação:} valida se o dia situa-se no intervalo $[1, 31]$, o mês em $[1, 12]$ e, preventivamente para simulações ordinárias, restringe o mês de fevereiro ao teto de 28 dias, disparando exceção caso os parâmetros violem o domínio;
+    \item \textbf{Método \texttt{formatarData()}:} utiliza \texttt{std::format} para retornar uma \texttt{std::string} padronizada com preenchimento de zeros à esquerda (\texttt{"DD/MM/AAAA"}).
+\end{itemize}
+
+\subsubsection{Classe Abstrata \texttt{Unidade}}
+A classe \texttt{Unidade} atua como a espinha dorsal polimórfica do sistema bélico, modelando as propriedades universais compartilhadas por qualquer força militar presente no campo de batalha:
+\begin{itemize}
+    \item \textbf{Atributo Protegido (\texttt{poderAtaque}):} valor inteiro base sorteado no nascimento e nas rodadas de combate;
+    \item \textbf{Atributo Privado (\texttt{destruicoes}):} contador estrito de oponentes destruídos pela unidade em duelos diretos ao longo da campanha. Inicializado com 0;
+    \item \textbf{Método Virtual Puro \texttt{getPoderAtaque() const = 0}:} caracteriza formalmente \texttt{Unidade} como uma \textbf{classe abstrata pura}. Não pode ser instanciada diretamente, impondo que toda subclasse forneça sua fórmula particular de cálculo ponderado de poder;
+    \item \textbf{Método Virtual Puro \texttt{sortearAtributos() = 0}:} obriga cada subclasse concreta a sortear novamente seus atributos específicos e seu poder de ataque antes de cada novo confronto;
+    \item \textbf{Método Virtual Puro \texttt{getTipo() const = 0}:} viabiliza a identificação textual amigável da unidade em tempo de execução sem violar o encapsulamento ou recorrer a mecanismos onerosos de RTTI (\textit{Run-Time Type Information});
+    \item \textbf{Destrutor Virtual (\texttt{virtual $\sim$Unidade()}):} elemento crítico de robustez em C++, garantindo que a deleção de instâncias derivadas manipuladas por ponteiros da classe base libere a memória de forma correta e segura;
+    \item \textbf{Operações Concretas:} \texttt{somaDestruicao()} incrementa o contador; \texttt{getDestruicoes()} consulta o histórico; \texttt{print()} exibe o tipo, poder e destruições; e a função utilitária estática protegida \texttt{sorteiaValor(int min, int max)} fornece números pseudoaleatórios no intervalo fechado especificado.
+\end{itemize}
+
+\subsubsection{Subclasses Concretas: \texttt{Infantaria}, \texttt{Veiculo} e \texttt{Aeronave}}
+As subclasses derivadas herdam de \texttt{Unidade} no modo público (\texttt{public Unidade}), representando uma relação semântica estrita de especialização (\textit{"é-um"}). Cada uma encapsula atributos bélicos privativos e implementa sua respectiva equação de ponderação de poder de ataque.
+
+\paragraph{1. Infantaria:}
+Representa soldados terrestres de infantaria. Adiciona os atributos inteiros privados \texttt{forca} e \texttt{velocidade}.
+\begin{itemize}
+    \item Faixas de sorteio: \texttt{poderAtaque} $\in [30, 60]$, \texttt{forca} $\in [20, 50]$, \texttt{velocidade} $\in [10, 40]$;
+    \item Cálculo do Poder de Ataque Final:
+    \begin{equation}
+        \text{Poder}_{\text{Infantaria}} = \left\lfloor \frac{(\text{poderAtaque} \times 5) + (\text{forca} \times 3) + (\text{velocidade} \times 2)}{10} \right\rfloor
+    \end{equation}
+    O valor resultante situa-se teoricamente no intervalo $[23, 53]$.
+\end{itemize}
+
+\paragraph{2. Veículo:}
+Representa blindados e carros de combate. Adiciona os atributos inteiros privados \texttt{blindagem} e \texttt{potenciaDeFogo}.
+\begin{itemize}
+    \item Faixas de sorteio: \texttt{poderAtaque} $\in [40, 80]$, \texttt{blindagem} $\in [30, 70]$, \texttt{potenciaDeFogo} $\in [20, 50]$;
+    \item Cálculo do Poder de Ataque Final:
+    \begin{equation}
+        \text{Poder}_{\text{Veiculo}} = \left\lfloor \frac{(\text{poderAtaque} \times 5) + (\text{blindagem} \times 4) + (\text{potenciaDeFogo} \times 1)}{10} \right\rfloor
+    \end{equation}
+    O valor resultante situa-se teoricamente no intervalo $[34, 73]$.
+\end{itemize}
+
+\paragraph{3. Aeronave:}
+Representa caças e helicópteros táticos. Adiciona os atributos inteiros privados \texttt{manobrabilidade} e \texttt{alcance}.
+\begin{itemize}
+    \item Faixas de sorteio: \texttt{poderAtaque} $\in [50, 90]$, \texttt{manobrabilidade} $\in [30, 70]$, \texttt{alcance} $\in [20, 50]$;
+    \item Cálculo do Poder de Ataque Final:
+    \begin{equation}
+        \text{Poder}_{\text{Aeronave}} = \left\lfloor \frac{(\text{poderAtaque} \times 5) + (\text{manobrabilidade} \times 3) + (\text{alcance} \times 2)}{10} \right\rfloor
+    \end{equation}
+    O valor resultante situa-se teoricamente no intervalo $[38, 76]$.
+\end{itemize}
+
+A Tabela~\ref{tab:unidades_resumo} consolida as especificações quantitativas e fórmulas de cada classe derivada.
+
+\begin{table}[H]
+\centering
+\caption{Resumo paramétrico e analítico das subclasses de \texttt{Unidade}.}
+\label{tab:unidades_resumo}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Subclasse} & \textbf{Poder Base} & \textbf{Atributo 1 (Faixa)} & \textbf{Atributo 2 (Faixa)} & \textbf{Faixa Final Resultante} \\
+\midrule
+\texttt{Infantaria} & $[30, 60]$ & Força $[20, 50]$ & Velocidade $[10, 40]$ & $[23, 53]$ \\
+\texttt{Veiculo}    & $[40, 80]$ & Blindagem $[30, 70]$ & Potência de Fogo $[20, 50]$ & $[34, 73]$ \\
+\texttt{Aeronave}   & $[50, 90]$ & Manobrabilidade $[30, 70]$ & Alcance $[20, 50]$ & $[38, 76]$ \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\subsubsection{Classe \texttt{Exercito}}
+A classe \texttt{Exercito} atua como agregador de unidades militares de combate, modelando o contingente operacional sob comando de um mesmo estandarte:
+\begin{itemize}
+    \item \textbf{Atributos de Identificação e Histórico:} armazena o \texttt{nome} do exército e contadores inteiros de \texttt{vitorias}, \texttt{derrotas} e \texttt{empates}, todos inicializados com zero;
+    \item \textbf{Coleção Polimórfica Heterogênea:} contém um vetor dinâmico da STL:
+    \begin{equation}
+        \texttt{std::vector<std::unique\_ptr<Unidade>> unidades}
+    \end{equation}
+    O uso de \texttt{std::unique\_ptr<Unidade>} expressa posse exclusiva (\textit{ownership}) do exército sobre suas unidades. Cada objeto é inserido via método \texttt{adicionarUnidade} utilizando semântica de movimentação (\texttt{std::move}), garantindo que a memória seja desalocada automaticamente no momento em que o exército for destruído;
+    \item \textbf{Relatório e Apresentação:} \texttt{getResultados()} formata a string \texttt{"Vitórias: X, Empates: Y, Derrotas: Z"}; \texttt{imprimeUnidades()} itera polimorficamente sobre o vetor invocando o método \texttt{print()} de cada unidade;
+    \item \textbf{Sistema de Pontuação:} implementa o método \texttt{getPontos()}, conferindo 3 pontos por vitória, 1 ponto por empate e 0 por derrota, fundamentando a ordenação das tabelas de classificação.
+\end{itemize}
+
+\subsubsection{Classe \texttt{Batalha}}
+A classe \texttt{Batalha} é a entidade responsável por operacionalizar o confronto bélico direto entre dois exércitos em uma data designada:
+\begin{itemize}
+    \item \textbf{Associações:} armazena uma instância de \texttt{Date} e ponteiros inteligentes compartilhados (\texttt{std::shared\_ptr<Exercito> exercitoA} e \texttt{exercitoB});
+    \item \textbf{Fase de Ofensiva e Sorteio:}
+    \begin{itemize}
+        \item \texttt{ataqueExercitoA()}: itera sobre todas as unidades do Exército A, invoca \texttt{sortearAtributos()} para renovar seus parâmetros estocásticos e acumula o somatório dos poderes de ataque em \texttt{resultadoA};
+        \item \texttt{ataqueExercitoB()}: itera de forma análoga sobre as unidades do Exército B, acumulando o total em \texttt{resultadoB}, e automaticamente desencadeia a resolução do combate por meio de \texttt{determinarVencedor()};
+    \end{itemize}
+    \item \textbf{Determinação de Vencedores e Duelos Individuais:}
+    \begin{itemize}
+        \item \textbf{Placar Coletivo:} compara o somatório dos poderes individuais (\texttt{resultadoA} contra \texttt{resultadoB}). O exército com maior poder é contemplado com vitória (\texttt{registrarVitoria()}) e o oponente com derrota (\texttt{registrarDerrota()}); se houver igualdade, ambos registram empate (\texttt{registrarEmpate()});
+        \item \textbf{Combates Individuais e Destruições:} adicionalmente, a batalha efetua o confronto direto unidade a unidade (unidade $k$ de A contra unidade $k$ de B). A unidade cujo poder de ataque individual for estritamente superior ao da sua contraparte recebe o acréscimo de uma baixa confirmada através de \texttt{somaDestruicao()};
+    \end{itemize}
+    \item \textbf{Formatação de Resultado:} \texttt{getResultado()} retorna a cadeia textual no padrão \texttt{"Exército A X x Y Exército B"}.
+\end{itemize}
+
+\subsubsection{Classe \texttt{Campanha}}
+A classe \texttt{Campanha} orquestra o torneio global entre múltiplos exércitos inscritos:
+\begin{itemize}
+    \item \textbf{Coleções:} armazena os exércitos (\texttt{vector<shared\_ptr<Exercito>>}) e as partidas da campanha (\texttt{vector<unique\_ptr<Batalha>>});
+    \item \textbf{Simulação em Rodada Dupla (Ida e Volta):} o método \texttt{simularBatalhas()} gera confrontos todos-contra-todos em dois turnos (onde cada par de exércitos $A$ e $B$ se enfrenta duas vezes: $A \times B$ e $B \times A$). As datas das partidas são geradas em ordem cronológica contínua;
+    \item \textbf{Tabela de Posições e Persistência:} O método \texttt{gerarTabelaDePosicoes}\allowbreak\texttt{(arquivo)} ordena os exércitos de forma decrescente utilizando \texttt{std::sort} com base em dois critérios encadeados:
+    \begin{enumerate}
+        \item Maior total de pontos acumulados (\texttt{getPontos()});
+        \item Em caso de igualdade de pontos, maior número de vitórias (\texttt{getVitorias()});
+    \end{enumerate}
+    A tabela pode ser impressa no console padrão (\texttt{std::cout}) ou salva em arquivo de texto (via fluxo de saída \texttt{std::ofstream});
+    \item \textbf{Destaque da Unidade Mais Letal:} \texttt{mostrarUnidadeMaisDestrutiva()} percorre exaustivamente todas as unidades de todos os exércitos participantes, identificando a unidade que acumulou o maior número de destruições e informando seu tipo e exército de origem.
+\end{itemize}
+
+% ==============================================================================
+% 4. DECISÕES DE PROJETO E RECURSOS AVANÇADOS DE C++
+% ==============================================================================
+\section{Decisões de Projeto e Recursos Avançados de C++}
+\label{sec:decisoes}
+
+A arquitetura do sistema foi desenhada com base em decisões de projeto bem fundamentadas, alinhadas aos padrões de projeto e aos recursos modernos da linguagem C++.
+
+\subsection{Herança e Polimorfismo Dinâmico via Vtable}
+Para evitar duplicação de código e estruturas condicionais complexas baseadas em \textit{switch/case} sobre tipos enumerados, utilizou-se o polimorfismo dinâmico:
+\begin{itemize}
+    \item A classe \texttt{Unidade} declara métodos virtuais puros (\texttt{= 0}), tornando-se abstrata. O compilador gera uma tabela de métodos virtuais (\textit{vtable}) para a hierarquia e anexa a cada objeto um ponteiro interno para a vtable correspondente (\textit{vptr});
+    \item Ao invocar \texttt{unidade->getPoderAtaque()} ou \texttt{unidade->print()}, a resolução da chamada é despachada dinamicamente para a implementação específica da subclasse concreta em tempo de execução;
+    \item O uso explícito do especificador \texttt{override} em todas as subclasses informa formalmente a intenção de sobreposição, permitindo ao compilador acusar erro de compilação em caso de divergência de assinatura.
+\end{itemize}
+
+\subsection{Gerenciamento Moderno de Memória e Padrão RAII}
+O modelo de classes original do enunciado sugeria apontamentos brutos (\texttt{Unidade*} e \texttt{Exercito*}). Contudo, na engenharia de software contemporânea em C++, o uso de ponteiros brutos para gerenciamento de tempo de vida é desencorajado por predispor a vazamentos de memória (\textit{memory leaks}) e referências pendentes (\textit{dangling pointers}).
+
+Adotou-se, portanto, uma estratégia de \textbf{ponteiros inteligentes da STL}:
+\begin{itemize}
+    \item \texttt{std::unique\_ptr<Unidade>}: expressa relação de posse exclusiva do \texttt{Exercito} sobre suas unidades. Nenhuma outra classe pode reivindicar a posse desses objetos. A transferência de controle ocorre obrigatoriamente por semântica de movimentação (\texttt{std::move}). Quando o exército é destruído, seu destrutor padrão desaloca automaticamente todas as unidades sem exigir laços manuais de \texttt{delete};
+    \item \texttt{std::unique\_ptr<Batalha>}: expressa a propriedade exclusiva da \texttt{Campanha} sobre as partidas realizadas;
+    \item \texttt{std::shared\_ptr<Exercito>}: permite que múltiplas batalhas referenciem os mesmos objetos \texttt{Exercito} simultaneamente sem clonagem ou perigo de dupla liberação (\textit{double-free}), mantendo a contagem de referências sob controle estrito da STL.
+\end{itemize}
+
+Essa decisão garante conformidade total com o idioma \textbf{RAII}: recursos são adquiridos na inicialização dos ponteiros inteligentes e liberados deterministicamente quando saem de escopo.
+
+\subsection{Alta Coesão, Baixo Acoplamento e Princípios SOLID}
+O design atende rigorosamente aos princípios de design orientado a objetos:
+\begin{itemize}
+    \item \textbf{Single Responsibility Principle (SRP):} Cada classe possui uma responsabilidade delimitada. \texttt{Date} gerencia calendário; \texttt{Unidade} encapsula atributos bélicos individuais; \texttt{Exercito} consolida grupos de soldados e histórico; \texttt{Batalha} orquestra um combate específico; e \texttt{Campanha} coordena o torneio;
+    \item \textbf{Open/Closed Principle (OCP):} O sistema está aberto para extensão e fechado para modificação. Se for necessário introduzir uma nova classe de unidade (por exemplo, \texttt{Artilharia}), basta herdá-la de \texttt{Unidade} e implementar seus métodos. Nenhuma alteração precisa ser realizada nas classes \texttt{Exercito}, \texttt{Batalha} ou \texttt{Campanha};
+    \item \textbf{Liskov Substitution Principle (LSP):} Qualquer instância das subclasses (\texttt{Infantaria}, \texttt{Veiculo} ou \texttt{Aeronave}) pode ser manipulada transparentemente através de referências a \texttt{Unidade} sem quebrar o comportamento do sistema.
+\end{itemize}
+
+\subsection{Uso Expressivo da Standard Template Library (STL)}
+A STL foi amplamente empregada para garantir eficiência e corretude:
+\begin{itemize}
+    \item \textbf{Contêineres Contíguos (\texttt{std::vector}):} proporcionam acesso indexado eficiente em cache e alocação dinâmica transparente;
+    \item \textbf{Algoritmos Genéricos (\texttt{std::sort}):} aplicados na ordenação da classificação final utilizando expressões lambda personalizadas com operadores relacionais compostos:
+\begin{lstlisting}[caption={Expressão lambda para ordenação composta da classificação final.}]
+std::sort(tabela.begin(), tabela.end(), 
+    [](const std::shared_ptr<Exercito>& a, const std::shared_ptr<Exercito>& b) {
+        if (a->getPontos() != b->getPontos()) {
+            return a->getPontos() > b->getPontos();
+        }
+        return a->getVitorias() > b->getVitorias();
+    });
+\end{lstlisting}
+    \item \textbf{Manipulação de Streams (\texttt{std::ostream}):} o método \texttt{gerarTabelaDePosicoes} recebe uma referência genérica \texttt{std::ostream\&}, chaveando de forma transparente entre \texttt{std::cout} e \texttt{std::ofstream} com base na presença ou ausência do caminho de arquivo.
+\end{itemize}
+
+% ==============================================================================
+% 5. INSTRUÇÕES DE COMPILAÇÃO E EXECUÇÃO COM EXEMPLOS
+% ==============================================================================
+\section{Instruções de Compilação e Execução com Exemplos}
+\label{sec:instrucoes}
+
+Nesta seção, apresentam-se as diretrizes formais para compilação e execução do projeto a partir do terminal de linha de comando, acompanhadas de demonstrações práticas de sua saída real.
+
+\subsection{Compilação Automatizada via Makefile}
+A compilação do projeto é inteiramente gerenciada pelo \texttt{Makefile} modular presente na raiz do repositório. Para compilar o código fonte e gerar o binário executável \texttt{build/game}, execute:
+\begin{lstlisting}[language=bash, numbers=none, caption={Compilação do projeto via Makefile.}]
+$ make
+\end{lstlisting}
+
+O processo executará a compilação incremental de cada unidade de tradução (\texttt{.cpp}) gerando os respectivos arquivos-objeto (\texttt{.o}) e suas dependências (\texttt{.d}), vinculando o binário executável em \texttt{build/game}.
+
+\paragraph{Alvos Auxiliares do Makefile:}
+\begin{itemize}
+    \item \texttt{make clean}: remove todos os artefatos temporários compilados (\texttt{obj/}), o diretório de binários (\texttt{build/}) e arquivos de metadados;
+    \item \texttt{make re}: executa a limpeza completa seguida da reconstrução integral de todos os alvos (\texttt{clean} seguido de \texttt{all});
+    \item \texttt{make compiledb}: extrai e consolida os comandos de compilação no arquivo \texttt{compile\_}\allowbreak\texttt{commands.json}.
+\end{itemize}
+
+\subsection{Compilação Manual Direta via Linha de Comando}
+Caso deseje compilar o projeto diretamente pelo compilador C++ sem o utilitário Make, pode-se invocar o \texttt{clang++} ou \texttt{g++} diretamente:
+\begin{lstlisting}[language=bash, numbers=none, caption={Compilação manual direta com Clang++ ou G++.}]
+$ clang++ -std=c++23 -Wall -Wextra -Wpedantic src/*.cpp -o build/game
+# ou equivalentemente com GNU GCC:
+$ g++ -std=c++23 -Wall -Wextra -Wpedantic src/*.cpp -o build/game
+\end{lstlisting}
+
+\subsection{Execução do Programa}
+Após a etapa de construção, o programa deve ser executado diretamente pelo terminal:
+\begin{lstlisting}[language=bash, numbers=none, caption={Execução do binário compilado.}]
+$ ./build/game
+\end{lstlisting}
+
+\subsection{Cenário de Teste e Demonstração da Saída Real}
+O módulo de entrada \texttt{src/main.cpp} instancia um cenário de teste completo com três exércitos participantes (\texttt{Exercito 1}, \texttt{Exercito 2} e \texttt{Exercito 3}), equipando cada um rigorosamente com cinco unidades militares: duas infantarias, dois veículos e uma aeronave.
+
+A Listagem~\ref{lst:saida_terminal} transcreve a saída autêntica emitida pelo programa durante a execução:
+
+\begin{lstlisting}[language={}, numbers=none, caption={Saída real capturada durante a execução do programa.}, label={lst:saida_terminal}]
+--- Unidades do Exercito 1 ---
+Infantaria - Poder de Ataque: 43 - Destruicoes: 0
+Infantaria - Poder de Ataque: 45 - Destruicoes: 0
+Veiculo - Poder de Ataque: 59 - Destruicoes: 0
+Veiculo - Poder de Ataque: 45 - Destruicoes: 0
+Aeronave - Poder de Ataque: 65 - Destruicoes: 0
+
+------- Tabela de Posicoes -------
+1. Exercito 3 - 12 pontos - Vitórias: 4, Empates: 0, Derrotas: 0
+2. Exercito 1 - 3 pontos - Vitórias: 1, Empates: 0, Derrotas: 3
+3. Exercito 2 - 3 pontos - Vitórias: 1, Empates: 0, Derrotas: 3
+
+Unidade mais destrutiva: Infantaria do exercito Exercito 3 com 4 destruicoes
+\end{lstlisting}
+
+\paragraph{Verificação da Persistência em Arquivo:}
+Além de emitir a classificação no console, o método \texttt{campanha.gerarTabelaDePosicoes("tabela.txt")} persiste com êxito os dados em arquivo. O conteúdo gravado pode ser consultado via comando \texttt{cat}:
+\begin{lstlisting}[language=bash, numbers=none, caption={Verificação do arquivo texto de classificação gerado.}]
+$ cat tabela.txt
+------- Tabela de Posicoes -------
+1. Exercito 3 - 12 pontos - Vitórias: 4, Empates: 0, Derrotas: 0
+2. Exercito 1 - 3 pontos - Vitórias: 1, Empates: 0, Derrotas: 3
+3. Exercito 2 - 3 pontos - Vitórias: 1, Empates: 0, Derrotas: 3
+\end{lstlisting}
+
+% ==============================================================================
+% 6. CONCLUSÃO
+% ==============================================================================
+\section{Conclusão}
+\label{sec:conclusao}
+
+O desenvolvimento do presente trabalho prático possibilitou a consolidação integral dos princípios e paradigmas da Programação Orientada a Objetos em C++, cumprindo com exatidão todos os requisitos funcionais, estruturais e conceituais prescritos no enunciado da disciplina BCC 138.
+
+A arquitetura resultante destaca-se pela clareza estrutural e pela elegância da modelagem:
+\begin{enumerate}
+    \item A classe abstrata \texttt{Unidade} consolidou a interface comum de combate, enquanto as subclasses \texttt{Infantaria}, \texttt{Veiculo} e \texttt{Aeronave} encapsularam suas equações particulares de poder, demonstrando o uso expressivo de herança e polimorfismo dinâmico;
+    \item O emprego de ponteiros inteligentes (\texttt{std::unique\_ptr} e \texttt{std::shared\_ptr}) garantiu gerenciamento seguro e moderno de memória sob o padrão RAII, erradicando o risco de vazamentos e dispensando chamadas manuais à primitiva \texttt{delete};
+    \item A simulação em rodada dupla orquestrada por \texttt{Campanha} e \texttt{Batalha} integrou dinâmicas de sorteio estocástico, cálculo de pontuações de liga, exportação flexível para arquivos de texto e rastreamento individual de destruições;
+    \item A organização do código-fonte em interfaces (\texttt{.hpp}) e implementações (\texttt{.cpp}), aliada à automação modular por meio do \texttt{Makefile}, garantiu conformidade aos mais rigorosos padrões de engenharia de software e compilação limpa sob o padrão ISO C++23.
+\end{enumerate}
+
+Em síntese, o software desenvolvido provê uma base sólida, expansível e manutenível para o protótipo de simulação de estratégia, pronta para receber novos tipos de unidades, terrenos ou regras avançadas de combate em etapas futuras.
+
+\end{document}
